@@ -16,6 +16,9 @@ public class Monster : MonoBehaviour
 
     Animator anim;
 
+    public Transform pos;
+    public Vector2 boxSize;
+
     void Start()
     {
         anim = this.gameObject.GetComponent<Animator>();
@@ -46,8 +49,17 @@ public class Monster : MonoBehaviour
                     anim.SetBool("isIdle", false);
                     anim.SetBool("isAtk", false);
                     anim.SetBool("isDeath", true);
-
                     break;
+                }
+
+                //플레이어 피격판정
+                Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
+                foreach (Collider2D collider in collider2Ds)
+                {
+                    if (collider.tag == "Player")
+                    {
+                        TakeDamage(GameManager.Instance.EnemyAtkPower);
+                    }
                 }
 
         }
@@ -55,6 +67,6 @@ public class Monster : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        GameManager.Instance.EnemyHp -= damage;
+        GameManager.Instance.PlayerHp -= damage;
     }
 }

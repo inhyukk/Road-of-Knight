@@ -63,15 +63,15 @@ public class GameManager : MonoBehaviour
         EnemyCount = 0;
         MaxEnemyCount = 20;
 
-        PlayerHpBar = gameObject.GetComponent<EnergyBar>();
-        EnemyHpBar = gameObject.GetComponent<EnergyBar>();
+        PlayerHpBar = GameObject.Find("PlayerHpBar").gameObject.GetComponent<EnergyBar>();
+        EnemyHpBar = GameObject.Find("EnemyHpBar").gameObject.GetComponent<EnergyBar>();
 
         Enemy = GameObject.FindGameObjectWithTag("Enemy");
     }
 
     void Start()
     {
-        enemyhpBar = Instantiate(EnemyHpBar, canvas.transform).GetComponent<RectTransform>();
+        enemyhpBar = Instantiate(EnemyHpBar, canvas.transform).GetComponent<RectTransform>();        
     }
 
     void Update()

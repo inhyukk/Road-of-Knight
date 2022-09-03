@@ -21,11 +21,6 @@ public class Player : MonoBehaviour
     public Transform pos;
     public Vector2 boxSize;
 
-    private void Start()
-    {
-        animSpeed = GameManager.Instance.PlayerAtkSpeed;
-    }
-
     void Update()
     {
         switch (playerstate)
@@ -50,6 +45,8 @@ public class Player : MonoBehaviour
                 }
             case PLAYERSTATE.ATK:
                 {
+                    animSpeed = GameManager.Instance.PlayerAtkSpeed;
+
                     anim.SetBool("isIdle", false);
                     anim.SetBool("isRun", false);
                     anim.SetBool("isAtk", true);
@@ -59,14 +56,20 @@ public class Player : MonoBehaviour
                 }
         }
 
+        //적 피격판정
         Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
         foreach(Collider2D collider in collider2Ds)
         {
             if(collider.tag == "Enemy")
             {
-                collider.GetComponent<Monster>().TakeDamage(GameManager.Instance.PlayerAtkPower);
+                GiveDamage(GameManager.Instance.PlayerAtkPower);
             }
         }
+    }
+
+    public void GiveDamage(int damage)
+    {
+        GameManager.Instance.EnemyHp -= damage;
     }
 
     private void OnDrawGizmos()
