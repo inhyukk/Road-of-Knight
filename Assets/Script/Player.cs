@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
-using Vector2 = UnityEngine.Vector2;
+using static Monster;
 
 public class Player : MonoBehaviour
 {
@@ -11,6 +10,7 @@ public class Player : MonoBehaviour
         IDLE = 0,
         RUN,
         ATK,
+        DEATH
     }
     static public PLAYERSTATE playerstate = PLAYERSTATE.RUN;
 
@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
                     anim.SetBool("isIdle", true);
                     anim.SetBool("isRun", false);
                     anim.SetBool("isAtk", false);
+                    anim.SetBool("isDeath", false);
 
                     break;
                 }
@@ -38,20 +39,28 @@ public class Player : MonoBehaviour
                     anim.SetBool("isIdle", false);
                     anim.SetBool("isRun", true);
                     anim.SetBool("isAtk", false);
-
-                    
+                    anim.SetBool("isDeath", false);
 
                     break;
                 }
             case PLAYERSTATE.ATK:
                 {
-                    animSpeed = GameManager.Instance.PlayerAtkSpeed;
-
                     anim.SetBool("isIdle", false);
                     anim.SetBool("isRun", false);
                     anim.SetBool("isAtk", true);
+                    anim.SetBool("isDeath", false);
+
+                    animSpeed = GameManager.Instance.PlayerAtkSpeed;
                     anim.SetFloat("AtkSpeed", animSpeed);
 
+                    break;
+                }
+            case PLAYERSTATE.DEATH:
+                {
+                    anim.SetBool("isIdle", false);
+                    anim.SetBool("isRun", false);
+                    anim.SetBool("isAtk", false);
+                    anim.SetBool("isDeath", true);
                     break;
                 }
         }
@@ -67,7 +76,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void GiveDamage(int damage)
+    private void GiveDamage(float damage)
     {
         GameManager.Instance.EnemyHp -= damage;
     }

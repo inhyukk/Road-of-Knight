@@ -8,7 +8,6 @@ public class Monster : MonoBehaviour
     {
         IDLE = 0,
         ATK,
-        DAMAGE,
         DEATH
     }
 
@@ -51,22 +50,27 @@ public class Monster : MonoBehaviour
                     anim.SetBool("isDeath", true);
                     break;
                 }
+        }
 
-                //플레이어 피격판정
-                Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
-                foreach (Collider2D collider in collider2Ds)
-                {
-                    if (collider.tag == "Player")
-                    {
-                        TakeDamage(GameManager.Instance.EnemyAtkPower);
-                    }
-                }
-
+        //플레이어 피격판정
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
+        foreach (Collider2D collider in collider2Ds)
+        {
+            if (collider.tag == "Player")
+            {
+                TakeDamage(GameManager.Instance.EnemyAtkPower);
+            }
         }
     }
 
-    public void TakeDamage(int damage)
+    private void TakeDamage(int damage)
     {
         GameManager.Instance.PlayerHp -= damage;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(pos.position, boxSize);
     }
 }
