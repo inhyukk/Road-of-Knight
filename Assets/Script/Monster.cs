@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
@@ -58,7 +59,7 @@ public class Monster : MonoBehaviour
         {
             if (collider.tag == "Player")
             {
-                TakeDamage(GameManager.Instance.EnemyAtkPower);
+                monsterstate = MONSTERSTATE.ATK;
             }
         }
     }
@@ -72,5 +73,10 @@ public class Monster : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(pos.position, boxSize);
+    }
+
+    void AtkMotion()
+    {
+        TakeDamage(GameManager.Instance.EnemyAtkPower);       
     }
 }

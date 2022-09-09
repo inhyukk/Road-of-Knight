@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using static Monster;
 
@@ -20,6 +21,8 @@ public class Player : MonoBehaviour
 
     public Transform pos;
     public Vector2 boxSize;
+
+    bool isAtk = false;
 
     void Update()
     {
@@ -65,15 +68,7 @@ public class Player : MonoBehaviour
                 }
         }
 
-        //적 피격판정
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
-        foreach(Collider2D collider in collider2Ds)
-        {
-            if(collider.tag == "Enemy")
-            {
-                GiveDamage(GameManager.Instance.PlayerAtkPower);
-            }
-        }
+        
     }
 
     private void GiveDamage(float damage)
@@ -85,5 +80,20 @@ public class Player : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(pos.position, boxSize);
+    }
+
+    IEnumerator PlayertoEnemyAttack()
+    {
+        //적 피격판정
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
+        foreach (Collider2D collider in collider2Ds)
+        {
+            if (collider.tag == "Enemy")
+            {
+                GiveDamage(GameManager.Instance.PlayerAtkPower);
+            }
+        }
+
+        yield return new WaitForSeconds(0.1f);
     }
 }

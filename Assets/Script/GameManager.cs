@@ -7,8 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public EnergyBar PlayerHpBar;
     public EnergyBar EnemyHpBar;
+    public GameObject Enemy;
     public Canvas canvas;
-    GameObject Enemy;
     RectTransform enemyhpBar;
 
     [HideInInspector] public int MaxUpgradeLevel = 0;
@@ -66,40 +66,49 @@ public class GameManager : MonoBehaviour
         EnemyCount = 0;
         MaxEnemyCount = 20;
 
-        Enemy = GameObject.FindGameObjectWithTag("Enemy");
-
-        enemyhpBar = Instantiate(EnemyHpBar, canvas.transform).GetComponent<RectTransform>();
-    }
-
-    void Update()
-    {
         PlayerHpBar.SetValueMin(0);
         PlayerHpBar.SetValueCurrent((int)PlayerHp);
         PlayerHpBar.SetValueMax((int)MaxPlayerHp);
 
         EnemyHpBar.SetValueMin(0);
-        EnemyHpBar.SetValueCurrent((int)EnemyHp);
+        //EnemyHpBar.SetValueCurrent((int)EnemyHp);
         EnemyHpBar.SetValueMax((int)MaxEnemyHp);
 
-        float height = 1.4f;
+        Instantiate(Enemy).gameObject.transform.position = new Vector3(6.4f, 2.5f, 0);
+        enemyhpBar = Instantiate(EnemyHpBar, canvas.transform).GetComponent<RectTransform>();
+    }
 
+    private void Update()
+    {
+        PlayerHpBar.SetValueCurrent((int)PlayerHp);
+        EnemyHpBar.SetValueCurrent((int)EnemyHp);
 
-        Vector3 _enemyhpBarPos =
-            Camera.main.WorldToScreenPoint(new Vector3(Enemy.transform.position.x, Enemy.transform.position.y + height, 0));
-        enemyhpBar.position = _enemyhpBarPos;
+        Debug.Log(PlayerHp);
+        Debug.Log(EnemyHp);
 
-        if(EnemyCount >= MaxEnemyCount)
+        EnemyHpbarPos();
+
+        if (EnemyCount >= MaxEnemyCount)
         {
             //다음 스테이지
         }
 
-        if(PlayerHp <= 0)  //사망
+        if (PlayerHp <= 0)  //사망
         {
             PlayerHp = 0;
 
             Player.playerstate = Player.PLAYERSTATE.DEATH;
         }
-    }   
+    }
+
+    void EnemyHpbarPos()
+    {
+        float height = 1.4f;
+
+        Vector3 _enemyhpBarPos =
+            Camera.main.WorldToScreenPoint(new Vector3(Enemy.transform.position.x, Enemy.transform.position.y + height, 0));
+        enemyhpBar.position = _enemyhpBarPos;
+    }
 
     public void UpgradeFn(int level, float currstatus, int price,
         Text LevelText, Text currentStatus, Text PriceText,  Button UpgradeButton)

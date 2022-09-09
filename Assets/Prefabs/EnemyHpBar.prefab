@@ -199,9 +199,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2bfc393ba3e9ba4886cecff90d9a611, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _valueCurrent: 50
+  _valueCurrent: 6
   valueMin: 0
-  valueMax: 100
+  valueMax: 10
   animationEnabled: 0
   animValueF: 0
 --- !u!114 &2763970165746682996
