@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
-using static Monster;
 
 public class Player : MonoBehaviour
 {
@@ -15,14 +14,13 @@ public class Player : MonoBehaviour
     }
     static public PLAYERSTATE playerstate = PLAYERSTATE.RUN;
 
-    public float animSpeed = 0;
+    [HideInInspector] public float animSpeed = 0;
 
     public Animator anim;
-
     public Transform pos;
-    public Vector2 boxSize;
+    public Vector2 boxSize = new Vector2(1.5f, 1.5f);
 
-    bool isAtk = false;
+    MenuMananger MenuMananger;
 
     void Update()
     {
@@ -44,6 +42,10 @@ public class Player : MonoBehaviour
                     anim.SetBool("isAtk", false);
                     anim.SetBool("isDeath", false);
 
+                    gameObject.transform.position =
+                            Vector3.MoveTowards(gameObject.transform.position, new Vector3(4.5f, 1.32f, 0), 0.02f);
+                    PlayertoEnemyAttack();
+
                     break;
                 }
             case PLAYERSTATE.ATK:
@@ -64,16 +66,12 @@ public class Player : MonoBehaviour
                     anim.SetBool("isRun", false);
                     anim.SetBool("isAtk", false);
                     anim.SetBool("isDeath", true);
+
+                    MenuMananger.MenuCanvas.enabled = true;
+
                     break;
                 }
         }
-
-        
-    }
-
-    private void GiveDamage(float damage)
-    {
-        GameManager.Instance.EnemyHp -= damage;
     }
 
     private void OnDrawGizmos()
@@ -82,7 +80,7 @@ public class Player : MonoBehaviour
         Gizmos.DrawWireCube(pos.position, boxSize);
     }
 
-    IEnumerator PlayertoEnemyAttack()
+    void PlayertoEnemyAttack()   //애니메이션 이벤트
     {
         //적 피격판정
         Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
@@ -90,10 +88,17 @@ public class Player : MonoBehaviour
         {
             if (collider.tag == "Enemy")
             {
-                GiveDamage(GameManager.Instance.PlayerAtkPower);
+                playerstate = PLAYERSTATE.ATK;
+            }
+            else
+            {
+                playerstate = PLAYERSTATE.RUN;
             }
         }
+    }
 
-        yield return new WaitForSeconds(0.1f);
+    private void GiveDamage()
+    {
+        GameManager.Instance.EnemyHp -= GameManager.Instance.PlayerAtkPower;
     }
 }

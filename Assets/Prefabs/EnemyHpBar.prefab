@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 2763970165746682996}
   m_Layer: 0
   m_Name: EnemyHpBar
-  m_TagString: Untagged
+  m_TagString: EnemyHpBar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2bfc393ba3e9ba4886cecff90d9a611, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _valueCurrent: 6
+  _valueCurrent: 10
   valueMin: 0
   valueMax: 10
   animationEnabled: 0

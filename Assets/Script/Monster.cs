@@ -19,7 +19,7 @@ public class Monster : MonoBehaviour
     public Transform pos;
     public Vector2 boxSize;
 
-    void Start()
+    void Awake()
     {
         anim = this.gameObject.GetComponent<Animator>();
     }
@@ -33,6 +33,8 @@ public class Monster : MonoBehaviour
                     anim.SetBool("isIdle", true);
                     anim.SetBool("isAtk", false);
                     anim.SetBool("isDeath", false);
+
+                    EnemytoPlayerAttack();
 
                     break;
                 }
@@ -49,24 +51,22 @@ public class Monster : MonoBehaviour
                     anim.SetBool("isIdle", false);
                     anim.SetBool("isAtk", false);
                     anim.SetBool("isDeath", true);
+
+                    Destroy(gameObject);
+
                     break;
                 }
         }
 
-        //플레이어 피격판정
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
-        foreach (Collider2D collider in collider2Ds)
+        if (GameManager.Instance.EnemyHp <= 0)
         {
-            if (collider.tag == "Player")
-            {
-                monsterstate = MONSTERSTATE.ATK;
-            }
+            monsterstate = MONSTERSTATE.DEATH;
         }
     }
 
-    private void TakeDamage(int damage)
+    private void TakeDamage()
     {
-        GameManager.Instance.PlayerHp -= damage;
+        GameManager.Instance.PlayerHp -= GameManager.Instance.EnemyAtkPower;
     }
 
     private void OnDrawGizmos()
@@ -75,8 +75,17 @@ public class Monster : MonoBehaviour
         Gizmos.DrawWireCube(pos.position, boxSize);
     }
 
-    void AtkMotion()
+    void EnemytoPlayerAttack()
     {
-        TakeDamage(GameManager.Instance.EnemyAtkPower);       
+        //적 피격판정
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
+        foreach (Collider2D collider in collider2Ds)
+        {
+            if (collider.tag == "Player")
+            {
+                monsterstate = MONSTERSTATE.ATK;
+            }
+            else monsterstate = MONSTERSTATE.IDLE;
+        }
     }
 }

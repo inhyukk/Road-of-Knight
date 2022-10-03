@@ -8,7 +8,7 @@ public class UpgradeManager : MonoBehaviour
 {
     int[] GoldTable = { 10, 50, 100, 200, 300 };
     int[] AttackPowerTable = { 1, 2, 5, 10, 20 };
-    int[] HpTable = { 100, 200, 500, 1000, 2000 };
+    int[] HpTable = { 10, 15, 20, 25, 30 };
     float[] AtkSpeedTable = { 0.01f, 0.05f, 0.1f, 0.15f, 0.2f };
 
     public Text HpLevelText;
@@ -52,19 +52,22 @@ public class UpgradeManager : MonoBehaviour
             GameManager.Instance.coin -= GameManager.Instance.PlayerHpPrice;
             GameManager.Instance.PlayerHpLevel++;
             GameManager.Instance.MaxPlayerHp += HpTable[i];
+            GameManager.Instance.PlayerHp += HpTable[i];
             GameManager.Instance.PlayerHpPrice += GoldTable[i];
         }
 
         GameManager.Instance.UpgradeFn
-        (GameManager.Instance.PlayerHpLevel, GameManager.Instance.PlayerHp,
+        (GameManager.Instance.PlayerHpLevel, GameManager.Instance.MaxPlayerHp,
             GameManager.Instance.PlayerHpPrice, HpLevelText, CurrentHpText, HpPriceText, HpUpgradeButton);
+
+        GameManager.Instance.PlayerHpBar.SetValueMax((int)GameManager.Instance.MaxPlayerHp);
     }
 
     public void AttackUpgradeBtn()
     {
         int i = GameManager.Instance.PlayerAtkLevel / 10;
 
-        if (GameManager.Instance.PlayerAtkLevel != GameManager.Instance.MaxUpgradeLevel)  //여기도 함수에 넣으면 값이 안바뀌기 때문에 따로 작성함
+        if (GameManager.Instance.PlayerAtkLevel != GameManager.Instance.MaxUpgradeLevel)  //함수에 넣으면 값 저장이 안되기 때문에 따로 작성함
         {
             GameManager.Instance.coin -= GameManager.Instance.PlayerAtkPrice;
             GameManager.Instance.PlayerAtkLevel++;

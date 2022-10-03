@@ -6,10 +6,6 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public EnergyBar PlayerHpBar;
-    public EnergyBar EnemyHpBar;
-    public GameObject Enemy;
-    public Canvas canvas;
-    RectTransform enemyhpBar;
 
     [HideInInspector] public int MaxUpgradeLevel = 0;
     
@@ -30,11 +26,15 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public float EnemyHp = 0;
     [HideInInspector] public float MaxEnemyHp = 0;
-    [HideInInspector] public int EnemyAtkPower = 0;
+    [HideInInspector] public float EnemyAtkPower = 0;
     [HideInInspector] public float EnemyAtkSpeed = 0f;
-    [HideInInspector] public int EnemyCount = 0;     //스테이지
-    [HideInInspector] public int MaxEnemyCount = 0;  //스테이지
+    [HideInInspector] public int EnemyCount = 0;
+    [HideInInspector] public int MaxEnemyCount = 0;    
+    [HideInInspector] public int StageNum = 0;
 
+    [HideInInspector] public float BossHp = 0;
+    [HideInInspector] public float MaxBossHp = 0;
+    [HideInInspector] public float BossAtkPower = 0;
 
     public static GameManager Instance;
 
@@ -44,12 +44,12 @@ public class GameManager : MonoBehaviour
 
         MaxUpgradeLevel = 50;
 
-        PlayerHp = 100;
-        MaxPlayerHp = PlayerHp;
+        MaxPlayerHp = 10;
+        PlayerHp = MaxPlayerHp;
         PlayerHpLevel = 1;
         PlayerHpPrice = 10;
 
-        PlayerAtkPower = 1;
+        PlayerAtkPower = 10;
         PlayerAtkLevel = 1;
         PlayerAtkPrice = 10;
 
@@ -59,55 +59,32 @@ public class GameManager : MonoBehaviour
 
         coin = 100000;
 
-        EnemyHp = 10;
-        MaxEnemyHp = EnemyHp;
+        MaxEnemyHp = 10;
+        EnemyHp = MaxEnemyHp;
         EnemyAtkPower = 1;
         EnemyAtkSpeed = 1.0f;
         EnemyCount = 0;
         MaxEnemyCount = 20;
+        StageNum = 1;
+
+        MaxBossHp = MaxEnemyHp;
+        BossHp = EnemyHp;
+        BossAtkPower = EnemyAtkPower;
 
         PlayerHpBar.SetValueMin(0);
-        PlayerHpBar.SetValueCurrent((int)PlayerHp);
+        PlayerHpBar.SetValueCurrent((int)MaxPlayerHp);
         PlayerHpBar.SetValueMax((int)MaxPlayerHp);
-
-        EnemyHpBar.SetValueMin(0);
-        //EnemyHpBar.SetValueCurrent((int)EnemyHp);
-        EnemyHpBar.SetValueMax((int)MaxEnemyHp);
-
-        Instantiate(Enemy).gameObject.transform.position = new Vector3(6.4f, 2.5f, 0);
-        enemyhpBar = Instantiate(EnemyHpBar, canvas.transform).GetComponent<RectTransform>();
     }
 
     private void Update()
     {
-        PlayerHpBar.SetValueCurrent((int)PlayerHp);
-        EnemyHpBar.SetValueCurrent((int)EnemyHp);
-
-        Debug.Log(PlayerHp);
-        Debug.Log(EnemyHp);
-
-        EnemyHpbarPos();
-
-        if (EnemyCount >= MaxEnemyCount)
-        {
-            //다음 스테이지
-        }
-
-        if (PlayerHp <= 0)  //사망
+        if (PlayerHp <= 0)  //플레이어 사망
         {
             PlayerHp = 0;
 
             Player.playerstate = Player.PLAYERSTATE.DEATH;
         }
-    }
-
-    void EnemyHpbarPos()
-    {
-        float height = 1.4f;
-
-        Vector3 _enemyhpBarPos =
-            Camera.main.WorldToScreenPoint(new Vector3(Enemy.transform.position.x, Enemy.transform.position.y + height, 0));
-        enemyhpBar.position = _enemyhpBarPos;
+        PlayerHpBar.SetValueCurrent((int)PlayerHp);
     }
 
     public void UpgradeFn(int level, float currstatus, int price,

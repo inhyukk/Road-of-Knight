@@ -96,7 +96,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.5
-    functionName: AtkMotion
+    functionName: TakeDamage
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
