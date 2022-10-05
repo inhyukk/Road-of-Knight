@@ -9,14 +9,14 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public int MaxUpgradeLevel = 0;
     
-    [HideInInspector] public float PlayerHp = 0;
+    public float PlayerHp = 0;
     [HideInInspector] public float MaxPlayerHp = 0;
     [HideInInspector] public int PlayerHpLevel = 0;
     [HideInInspector] public int PlayerHpPrice = 0;
     
-    [HideInInspector] public float PlayerAtkPower = 0;
-    [HideInInspector] public int PlayerAtkLevel = 0;
-    [HideInInspector] public int PlayerAtkPrice = 0;
+    public float PlayerAtkPower = 0;
+    [HideInInspector] public int PlayerAtkPowerLevel = 0;
+    [HideInInspector] public int PlayerAtkPowerPrice = 0;
     
     [HideInInspector] public float PlayerAtkSpeed = 0f;
     [HideInInspector] public int PlayerAtkSpeedLevel = 0;
@@ -38,26 +38,28 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
 
+    public AudioSource[] sfx;
+
     private void Awake()
     {
         Instance = this;
 
-        MaxUpgradeLevel = 50;
+        MaxUpgradeLevel = 100;
 
-        MaxPlayerHp = 10;
+        MaxPlayerHp = 20f;
         PlayerHp = MaxPlayerHp;
         PlayerHpLevel = 1;
-        PlayerHpPrice = 10;
+        PlayerHpPrice = 1;
 
-        PlayerAtkPower = 10;
-        PlayerAtkLevel = 1;
-        PlayerAtkPrice = 10;
+        PlayerAtkPower = 1;
+        PlayerAtkPowerLevel = 1;
+        PlayerAtkPowerPrice = 1;
 
         PlayerAtkSpeed = 1.0f;
         PlayerAtkSpeedLevel = 1;
-        PlayerAtkSpeedPrice = 10;
+        PlayerAtkSpeedPrice = 1;
 
-        coin = 100000;
+        coin = 0;
 
         MaxEnemyHp = 10;
         EnemyHp = MaxEnemyHp;
@@ -76,7 +78,14 @@ public class GameManager : MonoBehaviour
         PlayerHpBar.SetValueMax((int)MaxPlayerHp);
     }
 
-    private void Update()
+    private void Start()
+    {
+        sfx[0].loop = true;
+        sfx[0].PlayOneShot(sfx[0].clip);
+        sfx[4].PlayOneShot(sfx[4].clip);
+    }
+
+    void Update()
     {
         if (PlayerHp <= 0)  //플레이어 사망
         {
@@ -84,26 +93,26 @@ public class GameManager : MonoBehaviour
 
             Player.playerstate = Player.PLAYERSTATE.DEATH;
         }
+        if (EnemyHp <= 0) Enemy.enemystate = Enemy.ENEMYSTATE.DEATH;
+        
         PlayerHpBar.SetValueCurrent((int)PlayerHp);
     }
 
     public void UpgradeFn(int level, float currstatus, int price,
-        Text LevelText, Text currentStatus, Text PriceText,  Button UpgradeButton)
+        Text LevelText, Text currentStatusText, Text PriceText, Text UpgradeText, Button UpgradeButton, bool canbuy)
     {        
-        if (coin >= price)
+        if (canbuy)
         {
-            PriceText.color = Color.green;
-
             LevelText.text = level.ToString() + " Lv";
-            currentStatus.text = currstatus.ToString();
+            currentStatusText.text = currstatus.ToString();
             PriceText.text = price.ToString() + "G";
         }
-        else PriceText.color = Color.red;
         
-        if (level == MaxUpgradeLevel)
+        if (level == MaxUpgradeLevel - 1)
         {
             LevelText.text = "Max Lv";
             PriceText.enabled = false;
+            UpgradeText.enabled = false;
             UpgradeButton.enabled = false;
         }
     }

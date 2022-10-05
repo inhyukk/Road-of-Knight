@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static Monster;
+using static Enemy;
 
 public class StageManager : MonoBehaviour
 {
+    public GameObject player;
     public EnergyBar EnemyHpBar;
     public Canvas canvas;
     RectTransform enemyhpBar;
@@ -20,13 +21,15 @@ public class StageManager : MonoBehaviour
 
     Vector3 playerReturnPos = Vector3.zero;
 
-    int[] enemyhptable = { 10, 20, 30, 50, 100 };
+    int[] enemyhpTable = { 10, 20, 30, 50, 100 };
+    int[] GiveCoinTable = { 1000, 5000, 10000, 50000, 100000 };
+
 
     void Start()
     {
         BossText.enabled = false;
 
-        playerReturnPos = GameObject.FindGameObjectWithTag("Player").gameObject.transform.position;
+        playerReturnPos = player.transform.position;
         enemyhpBar = Instantiate(EnemyHpBar, canvas.transform).GetComponent<RectTransform>();
         StageText.text = GameManager.Instance.StageNum + " Stage";
 
@@ -36,40 +39,40 @@ public class StageManager : MonoBehaviour
         enemyhpbartemp.SetValueMin(0);
         enemyhpbartemp.SetValueCurrent((int)GameManager.Instance.MaxEnemyHp);  //초기화
         enemyhpbartemp.SetValueMax((int)GameManager.Instance.MaxEnemyHp);
-        SpawnEnemy();
+        SpawnEnemy();  //기본생성
     }
 
     void Update()
     {
-        int i = 0;
+        int i = GameManager.Instance.StageNum / 10;
 
-        
         enemyhpbartemp.SetValueCurrent((int)GameManager.Instance.EnemyHp);
         enemyhpbartemp.SetValueMax((int)GameManager.Instance.MaxEnemyHp);
+
+        if(enemystate == ENEMYSTATE.DEATH) GameManager.Instance.coin += GiveCoinTable[i];
 
         if (!enemytemp)
         {
             if (GameManager.Instance.EnemyCount == GameManager.Instance.MaxEnemyCount)  //다음 스테이지
             {
+                GameManager.Instance.EnemyCount = 0;
+                GameManager.Instance.StageNum++;
+                StageText.text = GameManager.Instance.StageNum + " Stage";
                 BossText.enabled = false;
 
                 if (i > 4)
                 {
                     i = 0;
-                    enemyhptable[i] *= 10;
+                    GiveCoinTable[i] *= 10;
                 }
-                GameManager.Instance.MaxEnemyHp += (float)enemyhptable[i];
-                i++;
-                
-                GameManager.Instance.StageNum++;
-                StageText.text = GameManager.Instance.StageNum + " Stage";
-                GameManager.Instance.EnemyCount = 0;
+                GameManager.Instance.MaxEnemyHp += enemyhpTable[i];
 
-                GameObject.FindGameObjectWithTag("Player").gameObject.transform.position = playerReturnPos;
-                Player.playerstate = Player.PLAYERSTATE.RUN;
-
-                GameObject.FindGameObjectWithTag("Stop").gameObject.SetActive(true);
+                player.transform.position = playerReturnPos;
                 GameManager.Instance.PlayerHp = GameManager.Instance.MaxPlayerHp;
+                Player.playerstate = Player.PLAYERSTATE.RUN;
+                GameObject.FindGameObjectWithTag("Stop").gameObject.SetActive(true);
+
+                GameManager.Instance.sfx[4].PlayOneShot(GameManager.Instance.sfx[4].clip);
             }
 
             if (GameManager.Instance.EnemyCount == GameManager.Instance.MaxEnemyCount - 1)  //보스소환
@@ -89,7 +92,7 @@ public class StageManager : MonoBehaviour
     {
         if (GameManager.Instance.EnemyCount <= GameManager.Instance.MaxEnemyCount)  //일반몹소환
         {
-            monsterstate = MONSTERSTATE.IDLE;  //상태 초기화
+            enemystate = ENEMYSTATE.IDLE;  //상태 초기화
             GameManager.Instance.EnemyHp = GameManager.Instance.MaxEnemyHp;  //체력 초기화
             Instantiate(Enemy).gameObject.transform.position = new Vector3(10.0f, 2.5f, 0);  //프리팹 몬스터 소환
             enemytemp = GameObject.FindGameObjectWithTag("Enemy").gameObject;  //인게임 몬스터 등록
@@ -104,11 +107,17 @@ public class StageManager : MonoBehaviour
 
         GameManager.Instance.MaxBossHp *= 1.5f;
         GameManager.Instance.BossAtkPower *= 1.5f;  //보스 스탯 설정
+        if (GameManager.Instance.StageNum / 10 == 0)  //10단위 스테이지마다 원래 보스의 약 2배가 세짐
+        {
+            GameManager.Instance.MaxBossHp *= 2f;
+            GameManager.Instance.BossAtkPower *= 2f;
+        }
+
         Mathf.Round(GameManager.Instance.MaxEnemyHp = GameManager.Instance.MaxBossHp);
         Mathf.Round(GameManager.Instance.EnemyAtkPower = GameManager.Instance.BossAtkPower);
 
         SpawnEnemy();
-        enemytemp.transform.localScale *= 1.5f;        
+        enemytemp.transform.localScale *= 1.5f;
      }
 
     void EnemyHpbarPos()

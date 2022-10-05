@@ -20,7 +20,12 @@ public class Player : MonoBehaviour
     public Transform pos;
     public Vector2 boxSize = new Vector2(1.5f, 1.5f);
 
-    MenuMananger MenuMananger;
+    public Canvas MenuCanvas;
+
+    void Start()
+    {
+        MenuCanvas.enabled = false;
+    }
 
     void Update()
     {
@@ -43,7 +48,7 @@ public class Player : MonoBehaviour
                     anim.SetBool("isDeath", false);
 
                     gameObject.transform.position =
-                            Vector3.MoveTowards(gameObject.transform.position, new Vector3(4.5f, 1.32f, 0), 0.02f);
+                            Vector3.MoveTowards(gameObject.transform.position, new Vector3(4.5f, 1.32f, 0), 0.05f);
                     PlayertoEnemyAttack();
 
                     break;
@@ -67,8 +72,6 @@ public class Player : MonoBehaviour
                     anim.SetBool("isAtk", false);
                     anim.SetBool("isDeath", true);
 
-                    MenuMananger.MenuCanvas.enabled = true;
-
                     break;
                 }
         }
@@ -86,19 +89,36 @@ public class Player : MonoBehaviour
         Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
         foreach (Collider2D collider in collider2Ds)
         {
-            if (collider.tag == "Enemy")
-            {
-                playerstate = PLAYERSTATE.ATK;
-            }
-            else
-            {
-                playerstate = PLAYERSTATE.RUN;
-            }
+            if (collider.tag == "Enemy")  playerstate = PLAYERSTATE.ATK;            
+            else playerstate = PLAYERSTATE.RUN;            
         }
     }
 
     private void GiveDamage()
     {
         GameManager.Instance.EnemyHp -= GameManager.Instance.PlayerAtkPower;
+        GameManager.Instance.sfx[2].PlayOneShot(GameManager.Instance.sfx[2].clip);
+        GameManager.Instance.sfx[3].PlayDelayed(0.05f);
+    }
+
+    void StopStep()
+    {
+        GameManager.Instance.sfx[4].Stop();
+    }
+
+    void GameOver()
+    {
+        GameManager.Instance.sfx[0].Stop();
+        GameManager.Instance.sfx[2].Stop();
+        GameManager.Instance.sfx[3].Stop();
+        GameManager.Instance.sfx[4].Stop();
+        GameManager.Instance.sfx[1].Play();
+        Invoke("MenuOn", GameManager.Instance.sfx[1].clip.length);
+    }
+
+    void MenuOn()
+    {
+        MenuCanvas.enabled = true;
+        Time.timeScale = 0;
     }
 }
