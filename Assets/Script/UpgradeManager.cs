@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 public class UpgradeManager : MonoBehaviour
 {
-    int[] CoinTable = { 1, 10, 50, 100, 200, 500, 1000, 3000, 5000, 10000 };
+    int[] CoinTable = { 1, 10, 30, 50, 80, 100, 300, 500, 1000, 5000 };
     int[] AttackPowerTable = { 1, 5, 10, 30, 50, 100, 200, 500, 1000, 2000 };
-    int[] HpTable = { 10, 30, 50, 100, 500, 1000, 2000, 5000, 10000, 20000 };
-    float[] AtkSpeedTable = { 0.01f, 0.05f, 0.1f, 0.15f, 0.2f, 0.5f, 1f, 1.2f, 1.5f, 2f };
+    int[] HpTable = { 20, 50, 100, 500, 100, 3000, 5000, 10000, 30000, 50000 };
+    float[] AtkSpeedTable = { 0.001f, 0.005f, 0.01f, 0.015f, 0.02f, 0.05f, 0.1f, 0.12f, 0.15f, 0.2f };
 
     public Text HpLevelText;
     public Text HpPriceText;

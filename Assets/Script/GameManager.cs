@@ -80,8 +80,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        sfx[0].loop = true;
-        sfx[0].PlayOneShot(sfx[0].clip);
+        sfx[0].PlayDelayed(0);
         sfx[4].PlayOneShot(sfx[4].clip);
     }
 

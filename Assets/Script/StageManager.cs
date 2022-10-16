@@ -22,7 +22,8 @@ public class StageManager : MonoBehaviour
     Vector3 playerReturnPos = Vector3.zero;
 
     int[] enemyhpTable = { 10, 20, 30, 50, 100 };
-    int[] GiveCoinTable = { 1000, 5000, 10000, 50000, 100000 };
+    int[] enemyatkTable = { 1, 5, 10, 20, 30 };
+    int[] GiveCoinTable = { 500, 1000, 5000, 10000, 50000 };
 
 
     void Start()
@@ -60,17 +61,19 @@ public class StageManager : MonoBehaviour
                 StageText.text = GameManager.Instance.StageNum + " Stage";
                 BossText.enabled = false;
 
+                GameManager.Instance.MaxEnemyHp -= GameManager.Instance.MaxBossHp - GameManager.Instance.MaxEnemyHp;
+                GameManager.Instance.EnemyAtkPower -= GameManager.Instance.BossAtkPower - GameManager.Instance.EnemyAtkPower;
                 if (i > 4)
                 {
                     i = 0;
                     GiveCoinTable[i] *= 10;
                 }
                 GameManager.Instance.MaxEnemyHp += enemyhpTable[i];
+                GameManager.Instance.EnemyAtkPower += enemyatkTable[i];
 
                 player.transform.position = playerReturnPos;
                 GameManager.Instance.PlayerHp = GameManager.Instance.MaxPlayerHp;
                 Player.playerstate = Player.PLAYERSTATE.RUN;
-                GameObject.FindGameObjectWithTag("Stop").gameObject.SetActive(true);
 
                 GameManager.Instance.sfx[4].PlayOneShot(GameManager.Instance.sfx[4].clip);
             }
@@ -105,16 +108,13 @@ public class StageManager : MonoBehaviour
      {
         BossText.enabled = true;
 
-        GameManager.Instance.MaxBossHp *= 1.5f;
-        GameManager.Instance.BossAtkPower *= 1.5f;  //보스 스탯 설정
-        if (GameManager.Instance.StageNum / 10 == 0)  //10단위 스테이지마다 원래 보스의 약 2배가 세짐
+        GameManager.Instance.MaxBossHp += GameManager.Instance.MaxBossHp * 0.5f;
+        GameManager.Instance.BossAtkPower += GameManager.Instance.BossAtkPower * 0.5f;  //보스 스탯 설정
+        if (GameManager.Instance.StageNum % 10 == 0)
         {
             GameManager.Instance.MaxBossHp *= 2f;
             GameManager.Instance.BossAtkPower *= 2f;
         }
-
-        Mathf.Round(GameManager.Instance.MaxEnemyHp = GameManager.Instance.MaxBossHp);
-        Mathf.Round(GameManager.Instance.EnemyAtkPower = GameManager.Instance.BossAtkPower);
 
         SpawnEnemy();
         enemytemp.transform.localScale *= 1.5f;
